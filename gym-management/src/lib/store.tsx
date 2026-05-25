@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react'
+import { createContext, useContext, useReducer, useMemo, ReactNode, Dispatch } from 'react'
 import { Member, Membership, Attendance, Payment } from './types'
 import { members as initialMembers, memberships as initialMemberships, attendances as initialAttendances, payments as initialPayments } from './data'
 
@@ -69,28 +69,33 @@ export function useStore() {
 
 export function useStats() {
   const { state } = useStore()
-  const activeMembers = state.members.filter(m => m.status === 'active')
-  const today = new Date().toISOString().split('T')[0]
-  const todayCheckIns = state.attendances.filter(a => a.date === today).length
-  const monthlyRevenue = state.payments
-    .filter(p => p.status === 'paid')
-    .reduce((sum, p) => sum + p.amount, 0)
-  const newThisMonth = state.members.filter(m => m.joinDate.startsWith(today.substring(0, 7))).length
-  const expiringSoon = state.members.filter(m => {
-    const join = new Date(m.joinDate)
-    const mem = state.memberships.find(mem => mem.id === m.membershipId)
-    if (!mem) return false
-    const expiry = new Date(join.getTime() + mem.duration * 86400000)
-    const daysLeft = Math.ceil((expiry.getTime() - Date.now()) / 86400000)
-    return daysLeft > 0 && daysLeft <= 7
-  }).length
 
-  return {
-    totalMembers: state.members.length,
-    activeMembers: activeMembers.length,
-    todayCheckIns,
-    monthlyRevenue,
-    newMembersThisMonth: newThisMonth,
-    expiringSoon,
-  }
+  return useMemo(() => {
+    const activeMembers = state.members.filter(m => m.status === 'active')
+    const today = new Date().toISOString().split('T')[0]
+    const todayCheckIns = state.attendances.filter(a => a.date === today).length
+    const monthlyRevenue = state.payments
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + p.amount, 0)
+    const newThisMonth = state.members.filter(m => m.joinDate.startsWith(today.substring(0, 7))).length
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now()
+    const expiringSoon = state.members.filter(m => {
+      const join = new Date(m.joinDate)
+      const mem = state.memberships.find(mem => mem.id === m.membershipId)
+      if (!mem) return false
+      const expiry = new Date(join.getTime() + mem.duration * 86400000)
+      const daysLeft = Math.ceil((expiry.getTime() - now) / 86400000)
+      return daysLeft > 0 && daysLeft <= 7
+    }).length
+
+    return {
+      totalMembers: state.members.length,
+      activeMembers: activeMembers.length,
+      todayCheckIns,
+      monthlyRevenue,
+      newMembersThisMonth: newThisMonth,
+      expiringSoon,
+    }
+  }, [state])
 }

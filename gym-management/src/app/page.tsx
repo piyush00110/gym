@@ -35,7 +35,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-zinc-200 p-5">
-          <h3 className="font-semibold text-zinc-900 mb-4">Today's Activity</h3>
+          <h3 className="font-semibold text-zinc-900 mb-4">Today&apos;s Activity</h3>
           {todayActivity.length === 0 ? (
             <p className="text-sm text-zinc-400">No check-ins recorded today.</p>
           ) : (

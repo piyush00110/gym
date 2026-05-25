@@ -40,6 +40,8 @@ export default function AttendancePage() {
 
       <div className="bg-white rounded-xl border border-zinc-200 p-5 mb-6">
         <h3 className="font-semibold text-zinc-900 mb-3">Quick Check-in / Check-out</h3>
+
+
         <div className="flex gap-3 items-end">
           <div className="flex-1">
             <label className="text-xs font-medium text-zinc-500">Select Member</label>
@@ -57,7 +59,7 @@ export default function AttendancePage() {
 
       <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
         <div className="px-5 py-3 border-b border-zinc-100 bg-zinc-50">
-          <h3 className="text-sm font-semibold text-zinc-700">Today's Records</h3>
+          <h3 className="text-sm font-semibold text-zinc-700">Today&apos;s Records</h3>
         </div>
         <table className="w-full">
           <thead>
